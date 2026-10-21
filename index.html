@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Wardrobe</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 500: '#6366f1', 600: '#4f46e5' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.2); border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-zinc-950 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen flex items-center justify-center p-0 sm:p-4 transition-colors duration-300">
+
+    <!-- Mobile Phone Frame Container -->
+    <div id="phone-frame" class="w-full sm:max-w-[410px] h-screen sm:h-[840px] bg-white dark:bg-[#0f1012] sm:border sm:border-zinc-800 sm:rounded-[40px] shadow-2xl flex flex-col overflow-hidden relative sm:ring-8 sm:ring-zinc-900/50">
+
+        <!-- Status / Header Bar -->
+        <div class="pt-3 px-6 pb-2 flex justify-between items-center bg-white/90 dark:bg-[#0f1012]/90 backdrop-blur-md z-30 shrink-0 border-b border-zinc-100 dark:border-zinc-800/60">
+            <div class="text-xs font-bold tracking-tight flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                <span>Aura Wardrobe</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="p-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-xs transition" title="Toggle Theme">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-grow overflow-y-auto px-4 py-4 space-y-6 pb-24">
+
+            <!-- TAB 1: WARDROBE & AI STYLIST DASHBOARD -->
+            <div id="view-dashboard" class="space-y-6">
+                
+                <!-- Weather & Location Sync Banner -->
+                <div class="bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-zinc-900 dark:to-zinc-900 border border-indigo-500/20 dark:border-zinc-800 p-4 rounded-3xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg" id="weather-emoji">🌤️</span>
+                            <div>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Live Environment</h3>
+                                <p id="weather-desc" class="text-xs font-semibold text-zinc-800 dark:text-white">GPS Weather ready...</p>
+                            </div>
+                        </div>
+                        <button onclick="requestLocationPermission()" class="bg-brand-600 hover:bg-brand-500 text-white text-[10px] font-semibold px-3 py-1.5 rounded-xl shadow-md transition">
+                            📍 Enable GPS
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI Outfit Generator Control Panel -->
+                <div class="bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 p-4 rounded-3xl space-y-4">
+                    <div class="border-b border-zinc-200 dark:border-zinc-800 pb-2.5">
+                        <h2 class="text-xs font-bold tracking-wider uppercase text-zinc-700 dark:text-zinc-300">✨ AI Outfit Stylist</h2>
+                        <p class="text-[11px] text-zinc-500">Optimized for your weather & mood</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-medium text-zinc-500 dark:text-zinc-400 mb-1">Select Mood</label>
+                            <select id="user-mood" class="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-500 transition">
+                                <option value="Chill">Chill 😌</option>
+                                <option value="Confident">Confident 😎</option>
+                                <option value="Energetic">Energetic ⚡</option>
+                                <option value="Cozy">Cozy ☕</option>
+                                <option value="Bold">Bold 🔥</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-zinc-500 dark:text-zinc-400 mb-1">Occasion</label>
+                            <select id="user-occasion" class="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-500 transition">
+                                <option value="University">University 🎒</option>
+                                <option value="Casual">Casual Hangout ☕</option>
+                                <option value="Formal">Formal Meeting 💼</option>
+                                <option value="Gym">Gym Session 🏋️‍♂️</option>
+                                <option value="Party">Night Out 🎉</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button onclick="generateSmartOutfit()" class="w-full bg-gradient-to-r from-brand-600 to-purple-600 text-white font-semibold py-2.5 rounded-xl hover:opacity-90 transition text-xs shadow-md shadow-brand-500/20">
+                        Generate Outfit Match ✨
+                    </button>
+
+                    <!-- Outfit Result & Full-Body Avatar Visualize Card -->
+                    <div id="outfit-result-container" class="hidden bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-3.5 rounded-2xl space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold">Recommended Look</span>
+                            <span class="bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-full text-[9px] font-semibold">AI Matched</span>
+                        </div>
+                        
+                        <div id="outfit-pieces-grid" class="grid grid-cols-3 gap-2"></div>
+                        
+                        <p class="text-[10px] text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 p-2.5 rounded-xl italic leading-relaxed" id="ai-reasoning"></p>
+
+                        <!-- FULL BODY AVATAR BUTTON & VIEWER -->
+                        <div class="pt-2 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-semibold">Full Body Avatar Try-On</span>
+                                <label class="bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 text-[10px] font-semibold px-3 py-1.5 rounded-xl cursor-pointer hover:opacity-90 transition">
+                                    📷 Upload Avatar/Selfie
+                                    <input type="file" accept="image/*" onchange="loadAvatarImage(event)" class="hidden">
+                                </label>
+                            </div>
+
+                            <!-- Avatar Preview Canvas Container -->
+                            <div id="avatar-tryon-box" class="hidden relative w-full h-64 bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+                                <img id="avatar-base-img" class="absolute inset-0 w-full h-full object-cover opacity-80">
+                                <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+                                
+                                <div class="absolute inset-4 flex flex-col items-center justify-center gap-2 z-10">
+                                    <div class="bg-white/90 dark:bg-zinc-950/90 backdrop-blur p-2 rounded-xl border border-zinc-300 dark:border-zinc-700 shadow-xl text-center w-3/4">
+                                        <p class="text-[9px] uppercase font-bold text-brand-500">Active Try-On Look</p>
+                                        <div class="flex justify-center gap-2 mt-1" id="avatar-overlay-thumbnails"></div>
+                                    </div>
+                                    <span class="bg-emerald-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-lg">✨ Visualized on Your Avatar</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Digital Wardrobe Section -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center px-1">
+                        <div>
+                            <h2 class="text-xs font-bold tracking-wider uppercase text-zinc-700 dark:text-zinc-300">My Closet Grid</h2>
+                            <p class="text-[10px] text-zinc-500"><span id="stat-total">0</span> items cataloged</p>
+                        </div>
+                        <div class="w-36">
+                            <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search items..." class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 text-[11px] focus:outline-none focus:border-brand-500 transition">
+                        </div>
+                    </div>
+
+                    <!-- Category Filter Pills -->
+                    <div class="flex gap-1.5 overflow-x-auto pb-1">
+                        <button onclick="filterCategory('All')" class="filter-btn px-3 py-1 text-[11px] font-medium rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 transition">All</button>
+                        <button onclick="filterCategory('Tops')" class="filter-btn px-3 py-1 text-[11px] font-medium rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 transition">Tops</button>
+                        <button onclick="filterCategory('Bottoms')" class="filter-btn px-3 py-1 text-[11px] font-medium rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 transition">Bottoms</button>
+                        <button onclick="filterCategory('Shoes')" class="filter-btn px-3 py-1 text-[11px] font-medium rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 transition">Shoes</button>
+                        <button onclick="filterCategory('Outerwear')" class="filter-btn px-3 py-1 text-[11px] font-medium rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 transition">Outerwear</button>
+                    </div>
+
+                    <!-- Closet Items Grid -->
+                    <div id="closet-grid" class="grid grid-cols-2 gap-2.5 pt-1"></div>
+                </div>
+
+            </div>
+
+            <!-- TAB 2: UPLOAD & ADD ITEM -->
+            <div id="view-add" class="hidden space-y-5">
+                <div>
+                    <h2 class="text-base font-bold tracking-tight">Digitize New Item</h2>
+                    <p class="text-xs text-zinc-500">Upload a photo from your phone. AI auto-detects details.</p>
+                </div>
+
+                <form onsubmit="handleAddItem(event)" class="space-y-4">
+                    <div class="border-2 border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl p-6 text-center bg-zinc-50 dark:bg-zinc-900/40 relative hover:border-brand-500 transition">
+                        <input type="file" id="item-file" accept="image/*" required onchange="previewImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div id="upload-placeholder" class="space-y-2">
+                            <span class="text-3xl">📸</span>
+                            <p class="text-xs font-semibold">Tap to upload photo from phone</p>
+                            <p class="text-[10px] text-zinc-400">Supports PNG, JPG, WEBP</p>
+                        </div>
+                        <img id="image-preview" class="hidden w-full h-44 object-cover rounded-2xl mx-auto shadow-md">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-zinc-500 dark:text-zinc-400 mb-1">Item Name / Title</label>
+                        <input type="text" id="item-name" required placeholder="e.g., Oversized Vintage Hoodie" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand-500 transition">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-medium text-zinc-500 dark:text-zinc-400 mb-1">Category</label>
+                            <select id="item-category" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand-500 transition">
+                                <option value="Tops">Tops</option>
+                                <option value="Bottoms">Bottoms</option>
+                                <option value="Shoes">Shoes</option>
+                                <option value="Outerwear">Outerwear</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-zinc-500 dark:text-zinc-400 mb-1">Primary Color</label>
+                            <input type="text" id="item-color" required placeholder="e.g., Charcoal Black" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand-500 transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-zinc-500 dark:text-zinc-400 mb-1">Season</label>
+                        <select id="item-season" class="w-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand-500 transition">
+                            <option value="All-Season">All-Season</option>
+                            <option value="Summer">Summer</option>
+                            <option value="Winter">Winter</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl transition text-xs shadow-lg shadow-brand-600/20">
+                        Save to Digital Closet 🚀
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="absolute bottom-0 inset-x-0 bg-white/95 dark:bg-[#0f1012]/95 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800/80 px-6 py-3 flex justify-around items-center z-30">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center gap-1 text-brand-500 transition">
+                <span class="text-base">👔</span>
+                <span class="text-[10px] font-semibold">Wardrobe</span>
+            </button>
+            <button onclick="switchTab('add')" id="nav-add" class="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition">
+                <span class="text-base">➕</span>
+                <span class="text-[10px] font-medium">Add Item</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- JavaScript Application Engine -->
+    <script>
+        let closet = JSON.parse(localStorage.getItem('aura_mobile_closet')) || [
+            { id: 1, name: 'White Minimal Tee', category: 'Tops', color: 'White', season: 'Summer', image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400' },
+            { id: 2, name: 'Classic Blue Denim', category: 'Bottoms', color: 'Blue', season: 'All-Season', image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400' },
+            { id: 3, name: 'Street Sneakers', category: 'Shoes', color: 'Black', season: 'All-Season', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400' },
+            { id: 4, name: 'Heavy Puffer Jacket', category: 'Outerwear', color: 'Black', season: 'Winter', image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400' }
+        ];
+
+        let currentFilter = 'All';
+        let searchQuery = '';
+        let currentTemp = 22;
+        let uploadedBase64Image = '';
+        let currentOutfitPieces = [];
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                themeIcon.innerText = '☀️';
+            } else {
+                html.classList.add('dark');
+                themeIcon.innerText = '🌙';
+            }
+        }
+
+        function switchTab(tabName) {
+            ['dashboard', 'add'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).classList.remove('text-brand-500');
+                document.getElementById(`nav-${t}`).classList.add('text-zinc-400');
+            });
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabName}`).classList.add('text-brand-500');
+            document.getElementById(`nav-${tabName}`).classList.remove('text-zinc-400');
+
+            if (tabName === 'dashboard') {
+                renderCloset();
+            }
+        }
+
+        function requestLocationPermission() {
+            const desc = document.getElementById('weather-desc');
+            const emoji = document.getElementById('weather-emoji');
+
+            if (!navigator.geolocation) {
+                desc.innerText = "Geolocation not supported";
+                return;
+            }
+
+            desc.innerText = "Requesting GPS permission...";
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                try {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                    const data = await res.json();
+
+                    if (data && data.current_weather) {
+                        currentTemp = data.current_weather.temperature;
+                        desc.innerText = `${currentTemp}°C • GPS Location Synced`;
+                        emoji.innerText = currentTemp < 15 ? '🧥' : currentTemp > 28 ? '☀️' : '🌤️';
+                    }
+                } catch (err) {
+                    desc.innerText = "Weather API error, using 22°C standard";
+                }
+            }, () => {
+                desc.innerText = "Permission denied. Using 22°C default.";
+            }, { timeout: 10000 });
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedBase64Image = e.target.result;
+                    const preview = document.getElementById('image-preview');
+                    const placeholder = document.getElementById('upload-placeholder');
+                    preview.src = uploadedBase64Image;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                    document.getElementById('item-name').value = file.name.substring(0, file.name.lastIndexOf('.')) || 'Uploaded Item';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function loadAvatarImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatarBox = document.getElementById('avatar-tryon-box');
+                    const avatarImg = document.getElementById('avatar-base-img');
+                    avatarImg.src = e.target.result;
+                    avatarBox.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        function handleAddItem(event) {
+            event.preventDefault();
+            if (!uploadedBase64Image) {
+                alert("Please upload a photo first!");
+                return;
+            }
+
+            const newItem = {
+                id: Date.now(),
+                name: document.getElementById('item-name').value,
+                category: document.getElementById('item-category').value,
+                color: document.getElementById('item-color').value,
+                season: document.getElementById('item-season').value,
+                image: uploadedBase64Image
+            };
+
+            closet.push(newItem);
+            localStorage.setItem('aura_mobile_closet', JSON.stringify(closet));
+            
+            event.target.reset();
+            uploadedBase64Image = '';
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('upload-placeholder').classList.remove('hidden');
+
+            switchTab('dashboard');
+        }
+
+        function renderCloset() {
+            const grid = document.getElementById('closet-grid');
+            document.getElementById('stat-total').innerText = closet.length;
+            grid.innerHTML = '';
+
+            let filtered = closet.filter(item => {
+                const matchCat = currentFilter === 'All' || item.category === currentFilter;
+                const matchSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    item.color.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-zinc-400 py-8 text-xs">No items found in wardrobe.</p>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                grid.innerHTML += `
+                    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl overflow-hidden group shadow-sm">
+                        <div class="aspect-square bg-zinc-100 dark:bg-zinc-950 relative overflow-hidden">
+                            <img src="${item.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <span class="absolute top-2 right-2 bg-zinc-950/80 backdrop-blur text-[9px] font-medium px-2 py-0.5 rounded-full text-white">${item.category}</span>
+                        </div>
+                        <div class="p-2.5 flex justify-between items-center">
+                            <div class="truncate pr-1">
+                                <h4 class="text-xs font-medium truncate">${item.name}</h4>
+                                <p class="text-[10px] text-zinc-400">${item.color} • ${item.season}</p>
+                            </div>
+                            <button onclick="deleteItem(${item.id})" class="text-zinc-400 hover:text-red-500 text-xs transition p-1">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value;
+            renderCloset();
+        }
+        function filterCategory(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText.includes(cat)) {
+                    btn.classList.add('bg-zinc-900', 'text-white', 'dark:bg-white', 'dark:text-zinc-950');
+                    btn.classList.remove('bg-zinc-100', 'text-zinc-600', 'dark:bg-zinc-900', 'dark:text-zinc-400');
+                } else {
+                    btn.classList.remove('bg-zinc-900', 'text-white', 'dark:bg-white', 'dark:text-zinc-950');
+                    btn.classList.add('bg-zinc-100', 'text-zinc-600', 'dark:bg-zinc-900', 'dark:text-zinc-400');
+                }
+            });
+            renderCloset();
+        }
+
+        function deleteItem(id) {
+            closet = closet.filter(i => i.id !== id);
+            localStorage.setItem('aura_mobile_closet', JSON.stringify(closet));
+            renderCloset();
+        }
+       function generateSmartOutfit() {
+            const mood = document.getElementById('user-mood').value;
+            const occasion = document.getElementById('user-occasion').value;
+            const container = document.getElementById('outfit-result-container');
+            const piecesGrid = document.getElementById('outfit-pieces-grid');
+            const reasoning = document.getElementById('ai-reasoning');
+            const overlayThumbnails = document.getElementById('avatar-overlay-thumbnails');
+
+            const tops = closet.filter(i => i.category === 'Tops');
+            const bottoms = closet.filter(i => i.category === 'Bottoms');
+            const shoes = closet.filter(i => i.category === 'Shoes');
+            const outerwear = closet.filter(i => i.category === 'Outerwear');
+
+            if (tops.length === 0 || bottoms.length === 0) {
+                alert("Please add at least one Top and Bottom to your closet first!");
+                return;
+            }
+
+            const t = tops[Math.floor(Math.random() * tops.length)];
+            const b = bottoms[Math.floor(Math.random() * bottoms.length)];
+            const s = shoes.length > 0 ? shoes[Math.floor(Math.random() * shoes.length)] : null;
+            const o = (currentTemp < 20 && outerwear.length > 0) ? outerwear[Math.floor(Math.random() * outerwear.length)] : null;
+
+            currentOutfitPieces = [t, b, s, o].filter(Boolean);
+
+            container.classList.remove('hidden');
+
+            let html = '';
+            let thumbHtml = '';
+
+            currentOutfitPieces.forEach(piece => {
+                html += `
+                    <div class="bg-zinc-100 dark:bg-zinc-900 p-2 rounded-xl text-center">
+                        <img src="${piece.image}" class="w-full h-16 object-cover rounded-lg mb-1">
+                        <p class="text-[9px] font-medium truncate">${piece.name}</p>
+                    </div>
+                `;
+                thumbHtml += `<img src="${piece.image}" class="w-8 h-8 object-cover rounded-md border border-zinc-500 shadow">`;
+            });
+
+            piecesGrid.innerHTML = html;
+            overlayThumbnails.innerHTML = thumbHtml;
+            reasoning.innerHTML = `💡 <b>Aura AI:</b> Perfectly matched for a <b>${mood}</b> vibe at a <b>${occasion}</b>. Current GPS weather is <b>${currentTemp}°C</b>, making this combination ideal.`;
+        }
+
+        renderCloset();
+    </script>
+</body>
+</html>
